@@ -1,21 +1,19 @@
 #include <stdlib.h>
 #include <iostream>
-
+#define top -1
+#define left -2
+#define bottom 1
+#define right 2
 using namespace std;
 
-typedef struct position position;
 typedef struct Nodo nodo;
 typedef struct Snake snake;
 
-struct position
-{
-	int x;
-	int y;	
-};
+snake *s; 
+int position = right;
 
 struct Nodo
 {
-	 position *pos;
 	 nodo *front;
 	 nodo *back;
 	 int x;
@@ -58,17 +56,37 @@ snake* GetSnake(){
 
 }
 
+void updatePosition(){
+	nodo* newHead = GetNode();
+	s->tail = s->tail->front;
+	s->tail->front->back = s->tail;
+	s->tail->back = NULL;
+	newHead->x = ((position == left || position == right) ? (s->head->x + position/2) : s->head->x  );
+	newHead->y = ((position == top || position == bottom) ? (s->head->y + position) : s->head->y );
+	newHead->back = s->head;
+		cout<<position<<" "<<newHead->x<<" "<<s->head->x<<(s->head->x + position/2)<<endl;
+
+	s->head->front = newHead;
+	s->head = newHead;
+}
 
 void PrintSnake(nodo *c){
 	if(c != NULL){
 		cout<<c->x<<","<<c->y<<endl;
 		PrintSnake(c->back);
+		
 	}
 }
-snake *s; 
+
 
 int main(){
 	s = GetSnake();
+	position = right;
+	PrintSnake(s->head);
+	updatePosition();
+	position = bottom;
+	updatePosition();
+	cout<<"---------------------"<<endl;
 	PrintSnake(s->head);
 	return 0;
 }
